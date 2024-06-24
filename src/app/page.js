@@ -4,6 +4,7 @@ import heroImg from "../assets/hero-image-github-profile.png";
 
 import { useEffect, useState } from "react";
 import Profile from "@/components/Profile";
+import Feed from "@/components/Feed";
 
 const Home = () => {
   const [ profile, setProfile ] = useState({});
@@ -16,7 +17,7 @@ const Home = () => {
       })
       .catch(error => {
         console.log(error)
-      })
+      });
   }, []);
 
 
@@ -27,7 +28,14 @@ const Home = () => {
         className="w-full h-[240px] object-cover"
       />
       <Profile 
+        name={ profile.name }
+        bio={ profile.bio }
         avatar={ profile.avatar_url }
+        followers={ profile.followers }
+        following={ profile.following }
+        location={ profile.location }
+      />
+      <Feed 
       />
     </main>
   );
