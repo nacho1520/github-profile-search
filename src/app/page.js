@@ -9,8 +9,10 @@ import useFetch from "@/hooks/useFetch";
 import SearchBar from "@/components/SearchBar";
 import profileReducer from "@/reducers/profile.reducer";
 import searchReducer from "@/reducers/search.reducer";
+import SearchCard from "@/components/SearchCard";
 
 const profile = {
+  users: "",
   name: "",
   bio: "",
   avatarImg: "",
@@ -20,22 +22,19 @@ const profile = {
   repositories: [],
 };
 
-const search = {
-  query: "",
-  searchResults: []
-};
 
 const Home = () => {
   const { get } = useFetch();
   const { ACTIONS, reducer } = profileReducer;
-  const { ACTIONS: SEARCH_ACTION, reducer: queryReducer  } = searchReducer;
   const [ state, dispatch ] = useReducer(reducer, profile);
-  const [ searchState, searchDispatch ] = useReducer(queryReducer, search);
+  const [ query, setQuery ] = useState("");
+  const [ searchResult, setSearchResult ] = useState({});
 
   useEffect(() => {
     get('https://api.github.com/users/github')
       .then(profileData => {
         dispatch({ type: ACTIONS.SET_PROFILE, payload: {
+          user: profileData.login,
           name: profileData.name,
           bio: profileData.bio,
           avatarImg: profileData.avatar_url,
@@ -53,8 +52,28 @@ const Home = () => {
       })
   }, []);
 
+  useEffect(() => {
+    if(query != "") {
+      const getData = setTimeout(() => {
+          console.log("Test", query);
+          get(`https://api.github.com/search/users?q=${ query }&page=1&per_page=1`)
+            .then(profiles => {
+              return get(profiles.items[0].url);
+            })
+            .then(userData => {
+              setSearchResult(userData);
+            })
+            .catch(error => console.log("Search fetch error:", error));
+      }, 2000);
+
+      return () => clearTimeout(getData);
+    } else {
+      setSearchResult({});
+    }
+  }, [query]);
+
   const handleInput = (value) => {
-    searchDispatch({ type: SEARCH_ACTION.SET_QUERY, payload: value });
+    setQuery(value);
   };
 
 
@@ -64,11 +83,20 @@ const Home = () => {
         src={ heroImg.src }
         className="w-full h-[240px] object-cover"
       />
-      <div className="w-full flex justify-center absolute top-[32px] left-0">
+      <div className="w-full flex flex-col items-center justify-center absolute top-[32px] left-0">
         <SearchBar  
-          input={ searchState.query }
+          input={ query }
           setInput={ handleInput }
         />
+        {
+          Object.keys(searchResult).length > 0 ? (
+            <SearchCard 
+              name={ searchResult.name }
+              bio={ searchResult.bio }
+              avatar={ searchResult.avatar_url }
+            />
+          ) : ''
+        }
       </div>
       <Profile 
         name={ state.name }

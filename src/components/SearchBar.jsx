@@ -2,7 +2,7 @@ import search from "../assets/Search.svg";
 
 const SearchBar = ({ input, setInput }) => {
     return(
-        <div className="w-[484px] p-4 bg-primary-bg rounded-xl inline-flex flex-wrap gap-3">
+        <div className="w-[484px] p-4 bg-primary-bg rounded-xl inline-flex flex-wrap gap-3 mb-2">
             <img 
                 src={ search.src }
                 className="size-6"
