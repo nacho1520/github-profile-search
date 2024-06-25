@@ -6,8 +6,9 @@ import { useEffect, useState, useReducer } from "react";
 import Profile from "@/components/Profile";
 import Feed from "@/components/Feed";
 import useFetch from "@/hooks/useFetch";
-import profileReducer from "@/reducers/profile.reducer";
 import SearchBar from "@/components/SearchBar";
+import profileReducer from "@/reducers/profile.reducer";
+import searchReducer from "@/reducers/search.reducer";
 
 const profile = {
   name: "",
@@ -19,10 +20,17 @@ const profile = {
   repositories: [],
 };
 
+const search = {
+  query: "",
+  searchResults: []
+};
+
 const Home = () => {
   const { get } = useFetch();
   const { ACTIONS, reducer } = profileReducer;
+  const { ACTIONS: SEARCH_ACTION, reducer: queryReducer  } = searchReducer;
   const [ state, dispatch ] = useReducer(reducer, profile);
+  const [ searchState, searchDispatch ] = useReducer(queryReducer, search);
 
   useEffect(() => {
     get('https://api.github.com/users/github')
@@ -45,6 +53,10 @@ const Home = () => {
       })
   }, []);
 
+  const handleInput = (value) => {
+    searchDispatch({ type: SEARCH_ACTION.SET_QUERY, payload: value });
+  };
+
 
   return (
     <main className="flex flex-col items-center">
@@ -53,7 +65,10 @@ const Home = () => {
         className="w-full h-[240px] object-cover"
       />
       <div className="w-full flex justify-center absolute top-[32px] left-0">
-        <SearchBar />
+        <SearchBar  
+          input={ searchState.query }
+          setInput={ handleInput }
+        />
       </div>
       <Profile 
         name={ state.name }
