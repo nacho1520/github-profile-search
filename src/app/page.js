@@ -8,11 +8,10 @@ import Feed from "@/components/Feed";
 import useFetch from "@/hooks/useFetch";
 import SearchBar from "@/components/SearchBar";
 import profileReducer from "@/reducers/profile.reducer";
-import searchReducer from "@/reducers/search.reducer";
 import SearchCard from "@/components/SearchCard";
 
 const profile = {
-  users: "",
+  user: "github",
   name: "",
   bio: "",
   avatarImg: "",
@@ -30,8 +29,8 @@ const Home = () => {
   const [ query, setQuery ] = useState("");
   const [ searchResult, setSearchResult ] = useState({});
 
-  useEffect(() => {
-    get('https://api.github.com/users/github')
+  const fetchData = () => {
+    get(`https://api.github.com/users/${ state.user }`)
       .then(profileData => {
         dispatch({ type: ACTIONS.SET_PROFILE, payload: {
           user: profileData.login,
@@ -50,7 +49,16 @@ const Home = () => {
       .catch(error => {
         console.log("Error:", error);
       })
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+    setQuery("");
+  }, [state.user]);
 
   useEffect(() => {
     if(query != "") {
@@ -76,6 +84,11 @@ const Home = () => {
     setQuery(value);
   };
 
+  const handleProfileSelection = () => {
+    console.log('Click');
+    dispatch({ type: ACTIONS.SET_USER, payload: searchResult.login });
+  };
+
 
   return (
     <main className="flex flex-col items-center">
@@ -94,6 +107,7 @@ const Home = () => {
               name={ searchResult.name }
               bio={ searchResult.bio }
               avatar={ searchResult.avatar_url }
+              manageClick={ () => handleProfileSelection() }
             />
           ) : ''
         }

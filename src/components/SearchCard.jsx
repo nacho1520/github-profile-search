@@ -1,6 +1,9 @@
-const SearchCard = ({ name, bio, avatar }) => {
+const SearchCard = ({ name, bio, avatar, manageClick }) => {
     return(
-        <div className="w-[484px] bg-dark-blue rounded-xl p-2 inline-flex flex-wrap gap-3 items-center z-10 mb-2 cursor-pointer">
+        <div 
+            className="w-[484px] bg-dark-blue rounded-xl p-2 inline-flex flex-wrap gap-3 items-center z-10 mb-2 cursor-pointer"
+            onClick={ manageClick }
+        >
             <img 
                 src={ avatar }
                 className="size-[72px] rounded-xl"
