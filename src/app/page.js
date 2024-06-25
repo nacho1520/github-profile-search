@@ -7,6 +7,7 @@ import Profile from "@/components/Profile";
 import Feed from "@/components/Feed";
 import useFetch from "@/hooks/useFetch";
 import profileReducer from "@/reducers/profile.reducer";
+import SearchBar from "@/components/SearchBar";
 
 const profile = {
   name: "",
@@ -22,7 +23,6 @@ const Home = () => {
   const { get } = useFetch();
   const { ACTIONS, reducer } = profileReducer;
   const [ state, dispatch ] = useReducer(reducer, profile);
-  // const [ profile, setProfile ] = useState({});
 
   useEffect(() => {
     get('https://api.github.com/users/github')
@@ -52,6 +52,9 @@ const Home = () => {
         src={ heroImg.src }
         className="w-full h-[240px] object-cover"
       />
+      <div className="w-full flex justify-center absolute top-[32px] left-0">
+        <SearchBar />
+      </div>
       <Profile 
         name={ state.name }
         bio={ state.bio }
