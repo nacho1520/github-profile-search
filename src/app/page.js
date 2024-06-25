@@ -2,23 +2,43 @@
 
 import heroImg from "../assets/hero-image-github-profile.png";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import Profile from "@/components/Profile";
 import Feed from "@/components/Feed";
 import useFetch from "@/hooks/useFetch";
+import profileReducer from "@/reducers/profile.reducer";
+
+const profile = {
+  name: "",
+  bio: "",
+  avatarImg: "",
+  followers: "",
+  following: "",
+  location: "",
+  repositories: [],
+};
 
 const Home = () => {
   const { get } = useFetch();
-  const [ profile, setProfile ] = useState({});
+  const { ACTIONS, reducer } = profileReducer;
+  const [ state, dispatch ] = useReducer(reducer, profile);
+  // const [ profile, setProfile ] = useState({});
 
   useEffect(() => {
     get('https://api.github.com/users/github')
       .then(profileData => {
-        setProfile(profileData);
+        dispatch({ type: ACTIONS.SET_PROFILE, payload: {
+          name: profileData.name,
+          bio: profileData.bio,
+          avatarImg: profileData.avatar_url,
+          followers: profileData.followers,
+          following: profileData.following,
+          location: profileData.location,
+        }})
         return get(profileData.repos_url);
       })
       .then(reposData => {
-        console.log(reposData);
+        dispatch({ type: ACTIONS.SET_REPOSITORIES, payload: reposData });
       })
       .catch(error => {
         console.log("Error:", error);
@@ -33,14 +53,15 @@ const Home = () => {
         className="w-full h-[240px] object-cover"
       />
       <Profile 
-        name={ profile.name }
-        bio={ profile.bio }
-        avatar={ profile.avatar_url }
-        followers={ profile.followers }
-        following={ profile.following }
-        location={ profile.location }
+        name={ state.name }
+        bio={ state.bio }
+        avatar={ state.avatarImg }
+        followers={ state.followers }
+        following={ state.following }
+        location={ state.location }
       />
       <Feed 
+        data={ state.repositories.slice(0,4) }
       />
     </main>
   );
