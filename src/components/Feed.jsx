@@ -1,6 +1,6 @@
 import RepoCard from "./RepoCard";
 
-const Feed = ({ data, handleBtn, allRepositories }) => {
+const Feed = ({ data, handleBtn, allRepositories, handleNavigation }) => {
     return(
         <div className="w-[70%] mt-[34px] pb-6 flex flex-col items-center">
             <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-y-[34px] gap-x-8 mb-[46px]">
@@ -12,6 +12,8 @@ const Feed = ({ data, handleBtn, allRepositories }) => {
                         forks={ item.forks }
                         stars={ item.stargazers_count }
                         license={ item.license ? item.license.spdx_id : null }
+                        url={ item.html_url }
+                        handleClick={ handleNavigation }
                         key={ item.id }
                     />
                 ))

@@ -15,9 +15,12 @@ const ImageLabel = ({ img, label }) => {
     );
 };
 
-const RepoCard = ({ name, description, forks, stars, license }) => {
+const RepoCard = ({ name, description, forks, stars, license, url, handleClick }) => {
     return(
-        <div className="rounded-xl p-5 bg-gradient-to-r from-dark-card to-card">
+        <div 
+            className="rounded-xl p-5 bg-gradient-to-r from-dark-card to-card cursor-pointer"
+            onClick={ () => handleClick(url) }
+        >
             <p className="text-xl text-white-font font-semibold mb-3">{ name }</p>
             <p className="text-base text-dark-gray-font font-medium">{ description }</p>
             <div className="inline-flex flex-wrap gap-6 mt-5 items-center">

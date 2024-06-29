@@ -93,7 +93,11 @@ const Home = () => {
 
   const handleViewAll = () => {
     dispatch({ type: ACTIONS.SET_ALL_REPOSITORIES });
-  }
+  };
+
+  const handleNavigation = (url) => {
+    window.open(url);
+  };
 
 
   return (
@@ -130,6 +134,7 @@ const Home = () => {
         data={ state.viewAll ? state.repositories : state.repositories.slice(0,4) }
         handleBtn={ () => handleViewAll() }
         allRepositories={ state.viewAll }
+        handleNavigation={ handleNavigation }
       />
     </main>
   );
