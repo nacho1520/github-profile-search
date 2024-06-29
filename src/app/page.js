@@ -19,6 +19,7 @@ const profile = {
   following: "",
   location: "",
   repositories: [],
+  viewAll: false,
 };
 
 
@@ -40,6 +41,7 @@ const Home = () => {
           followers: profileData.followers,
           following: profileData.following,
           location: profileData.location,
+          viewAll: false,
         }})
         return get(profileData.repos_url);
       })
@@ -89,6 +91,10 @@ const Home = () => {
     dispatch({ type: ACTIONS.SET_USER, payload: searchResult.login });
   };
 
+  const handleViewAll = () => {
+    dispatch({ type: ACTIONS.SET_ALL_REPOSITORIES });
+  }
+
 
   return (
     <main className="flex flex-col items-center">
@@ -121,7 +127,8 @@ const Home = () => {
         location={ state.location }
       />
       <Feed 
-        data={ state.repositories.slice(0,4) }
+        data={ state.viewAll ? state.repositories : state.repositories.slice(0,4) }
+        handleBtn={ () => handleViewAll() }
       />
     </main>
   );
