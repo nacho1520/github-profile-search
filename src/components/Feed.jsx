@@ -1,6 +1,6 @@
 import RepoCard from "./RepoCard";
 
-const Feed = ({ data, handleBtn }) => {
+const Feed = ({ data, handleBtn, allRepositories }) => {
     return(
         <div className="w-[70%] mt-[34px] pb-6 flex flex-col items-center">
             <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-y-[34px] gap-x-8 mb-[46px]">
@@ -17,12 +17,15 @@ const Feed = ({ data, handleBtn }) => {
                 ))
             }
             </div>
-            <button 
-                className="text-base font-semibold text-dark-gray-font"
-                onClick={ handleBtn }    
-            >
-                View all repositories
-            </button>
+            {
+                !allRepositories &&
+                <button 
+                    className="text-base font-semibold text-dark-gray-font"
+                    onClick={ handleBtn }    
+                >
+                    View all repositories
+                </button>
+            }
         </div>
     );
 };

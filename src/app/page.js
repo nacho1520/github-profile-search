@@ -129,6 +129,7 @@ const Home = () => {
       <Feed 
         data={ state.viewAll ? state.repositories : state.repositories.slice(0,4) }
         handleBtn={ () => handleViewAll() }
+        allRepositories={ state.viewAll }
       />
     </main>
   );
