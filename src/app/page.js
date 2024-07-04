@@ -3,12 +3,15 @@
 import heroImg from "../assets/hero-image-github-profile.png";
 
 import { useEffect, useState, useReducer } from "react";
+import useFetch from "@/hooks/useFetch";
+import profileReducer from "@/reducers/profile.reducer";
+import loaderReducer from "@/reducers/loading.reducer";
+
 import Profile from "@/components/Profile";
 import Feed from "@/components/Feed";
-import useFetch from "@/hooks/useFetch";
 import SearchBar from "@/components/SearchBar";
-import profileReducer from "@/reducers/profile.reducer";
 import SearchCard from "@/components/SearchCard";
+import LoaderSpinner from "@/components/LoaderSpinner";
 
 const profile = {
   user: "github",
@@ -23,16 +26,23 @@ const profile = {
 };
 
 
+const loading = {
+  loadingProfile: true,
+  loadingResults: false,
+}
+
 const Home = () => {
   const { get } = useFetch();
   const { ACTIONS, reducer } = profileReducer;
+  const { LOADING_ACTIONS, loadingReducer } = loaderReducer;
   const [ state, dispatch ] = useReducer(reducer, profile);
-  const [ loading, setLoading ] = useState(true);
+  const [ loadingState, loadingDispatch ] = useReducer(loadingReducer, loading); 
+  // const [ loading, setLoading ] = useState(true);
   const [ query, setQuery ] = useState("");
   const [ searchResult, setSearchResult ] = useState({});
 
   const fetchData = () => {
-    setLoading(true);
+    loadingDispatch({ type: LOADING_ACTIONS.LOAD_PROFILE });
     get(`https://api.github.com/users/${ state.user }`)
       .then(profileData => {
         dispatch({ type: ACTIONS.SET_PROFILE, payload: {
@@ -49,7 +59,7 @@ const Home = () => {
       })
       .then(reposData => {
         dispatch({ type: ACTIONS.SET_REPOSITORIES, payload: reposData });
-        setLoading(false);
+        loadingDispatch({ type: LOADING_ACTIONS.STOP_LOADING_PROFILE });
       })
       .catch(error => {
         console.log("Error:", error);
@@ -126,7 +136,15 @@ const Home = () => {
         }
       </div>
       {
-        !loading && (
+        loadingState.loadingProfile ? 
+        (
+          <div className="pt-12">
+            <LoaderSpinner
+              size={ 60 }
+            />
+          </div>
+        ) :
+        (
           <>
             <Profile 
               name={ state.name }
