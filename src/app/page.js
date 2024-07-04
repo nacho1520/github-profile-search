@@ -27,10 +27,12 @@ const Home = () => {
   const { get } = useFetch();
   const { ACTIONS, reducer } = profileReducer;
   const [ state, dispatch ] = useReducer(reducer, profile);
+  const [ loading, setLoading ] = useState(true);
   const [ query, setQuery ] = useState("");
   const [ searchResult, setSearchResult ] = useState({});
 
   const fetchData = () => {
+    setLoading(true);
     get(`https://api.github.com/users/${ state.user }`)
       .then(profileData => {
         dispatch({ type: ACTIONS.SET_PROFILE, payload: {
@@ -47,6 +49,7 @@ const Home = () => {
       })
       .then(reposData => {
         dispatch({ type: ACTIONS.SET_REPOSITORIES, payload: reposData });
+        setLoading(false);
       })
       .catch(error => {
         console.log("Error:", error);
@@ -122,20 +125,27 @@ const Home = () => {
           ) : ''
         }
       </div>
-      <Profile 
-        name={ state.name }
-        bio={ state.bio }
-        avatar={ state.avatarImg }
-        followers={ state.followers }
-        following={ state.following }
-        location={ state.location }
-      />
-      <Feed 
-        data={ state.viewAll ? state.repositories : state.repositories.slice(0,4) }
-        handleBtn={ () => handleViewAll() }
-        allRepositories={ state.viewAll }
-        handleNavigation={ handleNavigation }
-      />
+      {
+        !loading && (
+          <>
+            <Profile 
+              name={ state.name }
+              bio={ state.bio }
+              avatar={ state.avatarImg }
+              followers={ state.followers }
+              following={ state.following }
+              location={ state.location }
+            />
+            <Feed 
+              data={ state.viewAll ? state.repositories : state.repositories.slice(0,4) }
+              handleBtn={ () => handleViewAll() }
+              allRepositories={ state.viewAll }
+              handleNavigation={ handleNavigation }
+            />
+          </>
+        )
+      }
+      
     </main>
   );
 };
